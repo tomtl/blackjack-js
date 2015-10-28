@@ -3,8 +3,7 @@ deck.buildDeck();
 var person = new Player();
 var computer = new Player();
 initialDeal();
-console.log(calculateScore(person));
-console.log(calculateScore(computer));
+checkForBlackjack();
 
 var cardValues = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10,
                         "J": 10, "Q": 10, "K": 10, "A": 11};
@@ -47,11 +46,35 @@ function Player() {
     this.addCardToHand = function(card) {
         this.hand.push(card);
     };
+
+    this.calculateScore = function() {
+        var score = 0
+        var acesCount = 0
+
+        for (i = 0; i < this.hand.length; i++) {
+            var face = this.hand[i][1];
+            if (face === "A") {
+                acesCount++;
+            };
+            score += cardValues[face];
+        };
+
+        if (acesCount > 0 && score > 21) {
+            while (score > 21 && acesCount > 0) {
+                score -= 10;
+                acesCount -= 1;
+            }
+        }
+
+        this.score = score;
+     }
 };
 
 function dealTo(player) {
     player.addCardToHand(deck.dealOneCard());
+    player.calculateScore();
 };
+
 
 function initialDeal() {
   dealTo(person);
@@ -60,30 +83,14 @@ function initialDeal() {
   dealTo(computer);
 };
 
-function calculateScore(player) {
-    var score = 0
-    var acesCount = 0
-
-    for (i = 0; i < player.hand.length; i++) {
-        var face = player.hand[i][1];
-
-        if (face === "A") {
-            acesCount++;
-        };
-
-        score += cardValues[face];
-    };
-
-    if (acesCount > 0 && score > 21) {
-        while (score > 21 && acesCount > 0) {
-            score -= 10;
-            acesCount -= 1;
-        }
+function checkForBlackjack() {
+    if (person.score  === 21) {
+        console.log("You got 21. You win!");
+    } else if (computer.score === 21) {
+        console.log("Dealer got 21. You lose.");
     }
-
-    return score;
 };
 
-console.log("person: " + person.hand);
-console.log("computer: " + computer.hand);
+console.log("person: " + person.hand + " = " + person.score);
+console.log("computer: " + computer.hand + " = " + computer.score);
 console.log("cards in deck: " + deck.cards.length)

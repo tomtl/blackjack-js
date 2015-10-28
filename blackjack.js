@@ -3,17 +3,22 @@ deck.buildDeck();
 var person = new Player();
 var computer = new Player();
 initialDeal();
+console.log(calculateScore(person));
+console.log(calculateScore(computer));
 
-
+var cardValues = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10,
+                        "J": 10, "Q": 10, "K": 10, "A": 11};
 
 function Deck() {
   this.cards = [];
 
   this.buildDeck = function() {
-    var suits = ["C", "D", "S", "H"];
-    var values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
-    var deck = [];
+    const suits = ["C", "D", "S", "H"];
+    const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+
     const numberOfDecks = 1;
+    var deck = [];
+
 
     var deckCount = 0
     while (deckCount < numberOfDecks) {
@@ -49,12 +54,36 @@ function dealTo(player) {
 };
 
 function initialDeal() {
-    dealTo(person);
-    dealTo(computer);
-    dealTo(person);
-    dealTo(computer);
+  dealTo(person);
+  dealTo(computer);
+  dealTo(person);
+  dealTo(computer);
 };
 
-console.log(person.hand);
-console.log(computer.hand);
-console.log(deck.cards.length)
+function calculateScore(player) {
+    var score = 0
+    var acesCount = 0
+
+    for (i = 0; i < player.hand.length; i++) {
+        var face = player.hand[i][1];
+
+        if (face === "A") {
+            acesCount++;
+        };
+
+        score += cardValues[face];
+    };
+
+    if (acesCount > 0 && score > 21) {
+        while (score > 21 && acesCount > 0) {
+            score -= 10;
+            acesCount -= 1;
+        }
+    }
+
+    return score;
+};
+
+console.log("person: " + person.hand);
+console.log("computer: " + computer.hand);
+console.log("cards in deck: " + deck.cards.length)
